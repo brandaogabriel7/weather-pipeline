@@ -1,5 +1,5 @@
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 import logging
 
@@ -38,7 +38,7 @@ def extract_weather_data(
 
         data = response.json()
         data["location_name"] = location_name
-        data["extracted_at"] = datetime.utcnow().isoformat()
+        data["extracted_at"] = datetime.now(timezone.utc).isoformat()
 
         logger.info(f"Successfully extracted data for {location_name}")
         return data

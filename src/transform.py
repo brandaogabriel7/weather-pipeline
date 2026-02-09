@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List
 import logging
 
@@ -28,7 +28,7 @@ def transform_current_weather(raw_data: Dict) -> Dict:
         "weather_code": current.get("weathercode"),
         "observation_time": current.get("time"),
         "extracted_at": raw_data.get("extracted_at"),
-        "loaded_at": datetime.utcnow().isoformat(),
+        "loaded_at": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -61,7 +61,7 @@ def transform_hourly_weather(raw_data: Dict) -> List[Dict]:
                 else None,
                 "relative_humidity_percent": humidity[i] if i < len(humidity) else None,
                 "wind_speed_kmh": wind_speeds[i] if i < len(wind_speeds) else None,
-                "loaded_at": datetime.utcnow().isoformat(),
+                "loaded_at": datetime.now(timezone.utc).isoformat(),
             }
         )
 
