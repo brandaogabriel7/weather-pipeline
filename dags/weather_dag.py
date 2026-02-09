@@ -48,13 +48,13 @@ def load_task(**context):
     """Airflow task for loading."""
     import pandas as pd
 
-    tranformed_dict = context["task_instance"].xcom_pull(
+    transformed_dict = context["task_instance"].xcom_pull(
         task_ids="transform", key="transformed_data"
     )
 
     transformed_data = {
         "current": pd.DataFrame(transformed_dict["current"]),
-        "hourly": pd.DataFrame(tranformed_dict["hourly"]),
+        "hourly": pd.DataFrame(transformed_dict["hourly"]),
     }
 
     results = load_all_data(transformed_data, DB_CONFIG)
