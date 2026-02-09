@@ -10,6 +10,7 @@ Built following the [Building Your First Pipeline: From Concept to Execution](ht
 weather-pipeline/
 ├── config/          # Database and API configuration
 ├── dags/            # Airflow DAG definitions
+├── db-init/         # PostgreSQL initialization scripts
 ├── src/
 │   ├── extract.py   # API data extraction
 │   ├── transform.py # Data cleaning and structuring
@@ -22,26 +23,26 @@ weather-pipeline/
 
 ### Prerequisites
 
-- Python 3.12+
-- Docker (for PostgreSQL)
+- Docker and Docker Compose
 
-### Installation
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-### Start the database
+### Start all services
 
 ```bash
 docker compose up -d
 ```
 
-### Run the pipeline
+This starts PostgreSQL, the Airflow webserver (port 8080), and the Airflow scheduler. On first run it initializes both the `weather_db` and `airflow_db` databases and creates an admin user.
+
+### Airflow UI
+
+Open http://localhost:8080 and log in with `admin` / `admin`. Trigger the `weather_pipeline` DAG to run the ETL.
+
+### Run the pipeline manually (without Airflow)
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 python src/main.py
 ```
 
@@ -51,11 +52,18 @@ python src/main.py
 pytest tests/
 ```
 
+### Verify data
+
+```bash
+docker compose exec db psql -U postgres -d weather_db -c "SELECT COUNT(*) FROM hourly_weather;"
+```
+
 ## Technologies
 
 - **Python** - primary language
 - **Apache Airflow** - orchestration and scheduling
 - **PostgreSQL** - data storage
+- **Docker Compose** - local environment (Airflow + PostgreSQL)
 - **pandas** - data transformation
 - **requests** - API calls
 - **psycopg2** - PostgreSQL adapter
